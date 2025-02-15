@@ -1,26 +1,42 @@
+import streamlit as st
 import requests
 
-def get_weather(api_key, city):
-    base_url = "http://api.openweathermap.org/data/2.5/weather"
-    params = {
-        'q': city,
-        'appid': api_key,
-        'units': 'metric'
-    }
-    
-    response = requests.get(base_url, params=params)
-    data = response.json()
-    
-    if response.status_code == 200:
-        print(f"Weather in {city}:")
-        print(f"Temperature: {data['main']['temp']} °C")
-        print(f"Humidity: {data['main']['humidity']} %")
-        print(f"Weather: {data['weather'][0]['description']}")
-        print(f"Wind Speed: {data['wind']['speed']} m/s")
-    else:
-        print(f"Failed to get weather data: {data['message']}")
+# OpenWeatherMap API Key
+API_KEY = 'ca60b443558bec0e3c7638e5eb271309'
 
-if __name__ == "__main__":
-    api_key = "f90aac5b04eb2662eb0e13c65af1011f"
-    city = "Pune"
-    get_weather(api_key, city)
+# Function to get weather data
+def get_weather(city):
+    url = f'http://api.openweathermap.org/data/2.5/weather?q={city}&appid={API_KEY}&units=metric'
+    response = requests.get(url)
+    if response.status_code == 200:
+        data = response.json()
+        weather = {
+            'city': data['name'],
+            'temperature': data['main']['temp'],
+            'description': data['weather'][0]['description'],
+            'icon': data['weather'][0]['icon']
+        }
+        return weather
+    else:
+        return None
+
+# Streamlit app
+def main():
+    st.title('Weather App')
+    st.write('Enter a city name to get the current weather.')
+
+    city = st.text_input('City Name')
+
+    if city:
+        weather = get_weather(city)
+        if weather:
+            st.write(f"### {weather['city']}")
+            st.write(f"Temperature: {weather['temperature']}°C")
+            st.write(f"Weather: {weather['description'].capitalize()}")
+            icon_url = f"http://openweathermap.org/img/w/{weather['icon']}.png"
+            st.image(icon_url)
+        else:
+            st.write("City not found. Please enter a valid city name.")
+
+if _name_ == '_main_':
+    main()
