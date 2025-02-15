@@ -38,6 +38,5 @@ def main():
         else:
             st.write("City not found. Please enter a valid city name.")
 
-# This should be "__name__" instead of "_name_"
-if __name__ == "__main__":
+if _name_ == '__main__':
     main()
